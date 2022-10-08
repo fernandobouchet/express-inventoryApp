@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const MovieSchema = new Schema({
-  name: { type: String, required: true, maxLength: 50 },
-  description: { type: String, required: true, maxLength: 150 },
+  title: { type: String, required: true, maxLength: 50 },
+  release_date: { type: Date },
+  synopsis: { type: String, required: true, maxLength: 500 },
   category: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
+  rate: { type: Number, required: true },
   price: { type: Number, required: true },
   num_stock: { type: Number, required: true },
 });

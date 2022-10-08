@@ -20,7 +20,7 @@ exports.index = (req, res) => {
 };
 
 exports.movie_list = (req, res, next) => {
-  Movie.find({}, 'name category')
+  Movie.find({}, 'title category')
     .sort({ name: 1 })
     .populate('category')
     .exec((err, list_movies) => {

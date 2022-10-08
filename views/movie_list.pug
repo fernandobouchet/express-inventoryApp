@@ -7,8 +7,8 @@ block content
     each movie in movie_list
       div(class="card")
         a(class="card-body" href=movie.url)
-          h5(class="card-title") #{movie.name}
+          h5(class="card-title") #{movie.title}
         a(class="card-footer" href=movie.category[0].url)
           small(class="text-muted") #{movie.category[0].name}
     else
-      li There are n 
+      li There are no movies

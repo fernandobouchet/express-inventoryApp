@@ -40,11 +40,22 @@ function categorieCreate(name, description, cb) {
   });
 }
 
-function movieCreate(name, description, category, price, num_stock, cb) {
+function movieCreate(
+  title,
+  release_date,
+  synopsis,
+  category,
+  rate,
+  price,
+  num_stock,
+  cb
+) {
   itemdetail = {
-    name: name,
-    description: description,
+    title: title,
+    release_date: release_date,
+    synopsis: synopsis,
     category: category,
+    rate: rate,
     price: price,
     num_stock: num_stock,
   };
@@ -65,17 +76,39 @@ function createCategory(cb) {
   async.series(
     [
       function (callback) {
-        categorieCreate('Fantasy', 'Fantasy movie category', callback);
-      },
-      function (callback) {
         categorieCreate(
-          'Science Fiction',
-          'Science Fiction movie category',
+          'Action',
+          'Film genre in which the protagonist is thrust into a series of events that typically involve violence and physical feats.',
           callback
         );
       },
       function (callback) {
-        categorieCreate('Horror', 'Horror movie category', callback);
+        categorieCreate(
+          'Adventure',
+          'An adventure film is a form of adventure fiction, and is a genre of film.',
+          callback
+        );
+      },
+      function (callback) {
+        categorieCreate(
+          'Fantasy',
+          'Fantasy films are films that belong to the fantasy genre with fantastic themes, usually magic, supernatural events, mythology, folklore, or exotic fantasy worlds.',
+          callback
+        );
+      },
+      function (callback) {
+        categorieCreate(
+          'Science Fiction',
+          'Science fiction (or sci-fi) is a film genre that uses speculative, fictional science-based depictions of phenomena that are not fully accepted by mainstream science, such as extraterrestrial lifeforms, spacecraft, robots, cyborgs, interstellar travel or other technologies.',
+          callback
+        );
+      },
+      function (callback) {
+        categorieCreate(
+          'Comedy',
+          'A comedy film is a category of film which emphasizes humor. These films are designed to make the audience laugh through amusement.',
+          callback
+        );
       },
     ],
     // optional callback
@@ -88,9 +121,11 @@ function createMovies(cb) {
     [
       function (callback) {
         movieCreate(
-          'The Name of the Wind (The Kingkiller Chronicle)',
-          'I have stolen princesses back from sleeping barrow kings.',
-          [categories[0]],
+          'The Lord of the Rings: The Fellowship of the Ring',
+          '2001-12-18',
+          'Young hobbit Frodo Baggins, after inheriting a mysterious ring from his uncle Bilbo, must leave his home in order to keep it from falling into the hands of its evil creator. Along the way, a fellowship is formed to protect the ringbearer and make sure that the ring arrives at its final destination: Mt. Doom, the only place where it can be destroyed.',
+          [categories[0], categories[1], categories[2]],
+          '8.4',
           '500',
           '25',
           callback
@@ -98,9 +133,11 @@ function createMovies(cb) {
       },
       function (callback) {
         movieCreate(
-          "The Wise Man's Fear (The Kingkiller Chronicle)",
-          'Picking up the tale of Kvothe Kingkiller once again, we follow him into exile, into political intrigue.',
-          [categories[1]],
+          'The Matrix',
+          '1999-03-30',
+          'Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth.',
+          [categories[0], categories[3]],
+          '8.2',
           '800',
           '30',
           callback
@@ -108,9 +145,11 @@ function createMovies(cb) {
       },
       function (callback) {
         movieCreate(
-          'The Slow Regard of Silent Things',
-          'Deep below the University, there is a dark place.',
-          [categories[2]],
+          'Back to the Future',
+          '1985-07-03',
+          "Eighties teenager Marty McFly is accidentally sent back in time to 1955, inadvertently disrupting his parents' first meeting and attracting his mother's romantic interest. Marty must repair the damage to history by rekindling his parents' romance and - with the help of his eccentric inventor friend Doc Brown - return to 1985.",
+          [categories[1], categories[3], categories[4]],
+          '8.3',
           '700',
           '20',
           callback
