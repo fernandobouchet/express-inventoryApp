@@ -2,6 +2,7 @@ const Category = require('../models/categories');
 const Movie = require('../models/movies');
 
 const async = require('async');
+const { body, validationResult } = require('express-validator');
 
 exports.category_list = (req, res, next) => {
   Category.find()
@@ -45,13 +46,53 @@ exports.category_detail = (req, res, next) => {
   );
 };
 
-exports.category_create_get = (req, res) => {
-  res.send('NOT IMPLEMENTED: Category create GET');
+exports.category_create_get = (req, res, next) => {
+  res.render('category/form', { title: 'Create Category' });
 };
 
-exports.category_create_post = (req, res) => {
-  res.send('NOT IMPLEMENTED: Category crete POST');
-};
+exports.category_create_post = [
+  body('name')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Category name required')
+    .escape(),
+  body('description')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Synopsis required')
+    .escape(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    const category = new Category({
+      name: req.body.name,
+      description: req.body.description,
+    });
+    if (!errors.isEmpty()) {
+      res.render('category/form', {
+        title: 'Create Category',
+        category,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      Category.findOne({ name: req.body.name }).exec((err, found_category) => {
+        if (err) {
+          return next(err);
+        }
+        if (found_category) {
+          res.redirect(found_category.url);
+        } else {
+          category.save((err) => {
+            if (err) {
+              return next(err);
+            }
+            res.redirect(category.url);
+          });
+        }
+      });
+    }
+  },
+];
 
 exports.category_delete_get = (req, res) => {
   res.send('NOT IMPLEMENTED: Category delete GET');
