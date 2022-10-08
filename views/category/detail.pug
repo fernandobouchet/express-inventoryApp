@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+
+  h1 Category: #{category.name}
+
+  div(style="margin-left:20px; margin-top:20px")
+
+    h2 Movies
+    dl
+      each movie in movies
+        dt
+          a(href=movie.url) #{movie.title}
+        dd #{movie.synopsis}
+      else
+        p This genre has no movies

@@ -1,0 +1,20 @@
+extends ../layout
+
+block content
+
+  h1 Movie: #{movie.title}
+
+  div(style="margin-left:20px; margin-top:20px")
+
+  div(class="card-deck")
+      div(class="card")
+        div(class="card-body" href=movie.url)
+          h5(class="card-title") #{movie.title}
+          p Release date: #{movie.release_date}
+          p Synopsis: #{movie.synopsis}
+          p Rate: #{movie.rate} ⭐
+          p Price: $#{movie.price}
+          p Stock: #{movie.num_stock} units.
+        div(class="card-footer")
+          each category in movie.category
+            a(class="badge badge-pill badge-primary" href=category.url) #{category.name}

@@ -27,15 +27,35 @@ exports.movie_list = (req, res, next) => {
       if (err) {
         return next(err);
       }
-      res.render('movie_list', {
+      res.render('movie/list', {
         title: 'Movies',
         movie_list: list_movies,
       });
     });
 };
 
-exports.movie_detail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: Movie detail: ${req.params.id}`);
+exports.movie_detail = (req, res, next) => {
+  async.parallel(
+    {
+      movie(callback) {
+        Movie.findById(req.params.id).populate('category').exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.movie === null) {
+        const err = new Error('Movie not found');
+        err.status = 404;
+        return next(err);
+      }
+      res.render('movie/detail', {
+        title: 'Movie Detail',
+        movie: results.movie,
+      });
+    }
+  );
 };
 
 exports.movie_create_get = (req, res) => {

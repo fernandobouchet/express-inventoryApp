@@ -1,4 +1,7 @@
 const Category = require('../models/categories');
+const Movie = require('../models/movies');
+
+const async = require('async');
 
 exports.category_list = (req, res, next) => {
   Category.find()
@@ -7,15 +10,39 @@ exports.category_list = (req, res, next) => {
       if (err) {
         return next(err);
       }
-      res.render('category_list', {
+      res.render('category/list', {
         title: 'Categories',
         categories_list: list_categories,
       });
     });
 };
 
-exports.category_detail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: Category detail: ${req.params.id}`);
+exports.category_detail = (req, res, next) => {
+  async.parallel(
+    {
+      category(callback) {
+        Category.findById(req.params.id).exec(callback);
+      },
+      movies(callback) {
+        Movie.find({ category: req.params.id }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.category === null) {
+        const err = new Error('Category not found');
+        err.status = 404;
+        return next(err);
+      }
+      res.render('category/detail', {
+        title: 'Category Detail',
+        category: results.category,
+        movies: results.movies,
+      });
+    }
+  );
 };
 
 exports.category_create_get = (req, res) => {
