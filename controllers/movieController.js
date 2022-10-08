@@ -2,7 +2,6 @@ const Movie = require('../models/movies');
 const Category = require('../models/categories');
 
 const async = require('async');
-const movies = require('../models/movies');
 
 exports.index = (req, res) => {
   async.parallel(
@@ -20,8 +19,19 @@ exports.index = (req, res) => {
   );
 };
 
-exports.movie_list = (req, res) => {
-  res.send('NOT IMPLEMENTED: Movie list');
+exports.movie_list = (req, res, next) => {
+  Movie.find({}, 'name category')
+    .sort({ name: 1 })
+    .populate('category')
+    .exec((err, list_movies) => {
+      if (err) {
+        return next(err);
+      }
+      res.render('movie_list', {
+        title: "Movie's List",
+        movie_list: list_movies,
+      });
+    });
 };
 
 exports.movie_detail = (req, res) => {

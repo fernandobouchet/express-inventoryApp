@@ -22,7 +22,7 @@ router.post('/movie/:id/update', movieController.movie_update_post);
 
 router.get('/movie/:id', movieController.movie_detail);
 
-router.post('/movies', movieController.movie_list);
+router.get('/movies', movieController.movie_list);
 
 // CATEGORIES ROUTES //
 
@@ -40,6 +40,6 @@ router.post('/category/:id/update', categoryController.category_update_post);
 
 router.get('/category/:id', categoryController.category_detail);
 
-router.post('/categories', categoryController.category_list);
+router.get('/categories', categoryController.category_list);
 
 module.exports = router;
