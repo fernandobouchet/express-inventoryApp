@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const { DateTime } = require('luxon');
 
 const MovieSchema = new Schema({
   title: { type: String, required: true, maxLength: 50 },
@@ -13,6 +14,12 @@ const MovieSchema = new Schema({
 
 MovieSchema.virtual('url').get(function () {
   return `/catalog/movie/${this.id}`;
+});
+
+MovieSchema.virtual('release_date_formated').get(function () {
+  return DateTime.fromJSDate(this.release_date).toLocaleString(
+    DateTime.DATE_MED
+  );
 });
 
 module.exports = mongoose.model('Movie', MovieSchema);
