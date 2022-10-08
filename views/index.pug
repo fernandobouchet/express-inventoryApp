@@ -2,4 +2,13 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Welcome to #[em Rent Movies], a very basic Express website where you can make use of basic CRUD operations for Movies their categories.
+
+  if error
+    p Error getting dynamic content.
+  else
+    p The catalog has the following record counts:
+
+    ul
+      li #[strong Movies:] !{data.movies_count}
+      li #[strong Categories:] !{data.categories_count}

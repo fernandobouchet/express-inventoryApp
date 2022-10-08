@@ -1,7 +1,23 @@
 const Movie = require('../models/movies');
+const Category = require('../models/categories');
+
+const async = require('async');
+const movies = require('../models/movies');
 
 exports.index = (req, res) => {
-  res.send('NOT IMPLEMENTED: Site Home Page');
+  async.parallel(
+    {
+      movies_count(callback) {
+        Movie.countDocuments({}, callback);
+      },
+      categories_count(callback) {
+        Category.countDocuments({}, callback);
+      },
+    },
+    (err, results) => {
+      res.render('index', { title: 'Movies Rent', error: err, data: results });
+    }
+  );
 };
 
 exports.movie_list = (req, res) => {
