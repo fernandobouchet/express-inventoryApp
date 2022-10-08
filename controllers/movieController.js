@@ -28,7 +28,7 @@ exports.movie_list = (req, res, next) => {
         return next(err);
       }
       res.render('movie_list', {
-        title: "Movie's List",
+        title: 'Movies',
         movie_list: list_movies,
       });
     });

@@ -8,7 +8,7 @@ exports.category_list = (req, res, next) => {
         return next(err);
       }
       res.render('category_list', {
-        title: 'Categories List',
+        title: 'Categories',
         categories_list: list_categories,
       });
     });

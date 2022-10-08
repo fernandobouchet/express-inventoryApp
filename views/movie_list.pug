@@ -3,10 +3,12 @@ extends layout
 block content
   h1= title
 
-  ul
+  div(class="card-deck")
     each movie in movie_list
-      li
-        a(href=movie.url) #{movie.name}
-        | (#{movie.category[0].name})
+      div(class="card")
+        a(class="card-body" href=movie.url)
+          h5(class="card-title") #{movie.name}
+        a(class="card-footer" href=movie.category[0].url)
+          small(class="text-muted") #{movie.category[0].name}
     else
-      li There are no movies
+      li There are n 
