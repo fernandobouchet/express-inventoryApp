@@ -95,11 +95,61 @@ exports.category_create_post = [
 ];
 
 exports.category_delete_get = (req, res) => {
-  res.send('NOT IMPLEMENTED: Category delete GET');
+  async.parallel(
+    {
+      category(callback) {
+        Category.findById(req.params.id).exec(callback);
+      },
+      movies(callback) {
+        Movie.find({ category: req.params.id }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.category === null) {
+        res.redirect('/catalog/categories');
+      }
+      res.render('category/delete', {
+        title: 'Delete Category',
+        category: results.category,
+        movies: results.movies,
+      });
+    }
+  );
 };
 
-exports.category_delete_post = (req, res) => {
-  res.send('NOT IMPLEMENTED: Category delete POST');
+exports.category_delete_post = (req, res, next) => {
+  async.parallel(
+    {
+      category(callback) {
+        Category.findById(req.params.id).exec(callback);
+      },
+      movies(callback) {
+        Movie.find({ category: req.params.id }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.movies.length > 0) {
+        res.render('category/delete', {
+          title: 'Delete Category',
+          category: results.category,
+          movies: results.movies,
+        });
+        return;
+      }
+      Category.findByIdAndRemove(req.body.categoryId, (err) => {
+        if (err) {
+          return next(err);
+        }
+        res.redirect('/catalog/categories');
+      });
+    }
+  );
 };
 
 exports.category_update_get = (req, res) => {

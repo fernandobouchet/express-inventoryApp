@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+  h1 #{title}: #{category.name}
+
+  if movies.length
+    p #[strong Delete the following movies before attempting to delete this category.]
+
+    div(style="margin-left:20px, margin-top:20px")
+
+      h4 Movies
+
+      dl
+      each movie in movies
+        dt
+          a(href=movie.url) #{movie.title}
+        dd #{movie.synopsis}
+  
+  else
+    p Do you really want to delete this category?
+
+    form(method="POST" action="")
+      div.form-group
+        input#categoryId.form-control(type="hidden", name="categoryId",required="true" value=category.id)
+      button.btn.btn-danger(type="submit") Delete
