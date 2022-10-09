@@ -2,6 +2,7 @@ const Movie = require('../models/movies');
 const Category = require('../models/categories');
 
 const async = require('async');
+const { body, validationResult } = require('express-validator');
 
 exports.index = (req, res) => {
   async.parallel(
@@ -58,13 +59,97 @@ exports.movie_detail = (req, res, next) => {
   );
 };
 
-exports.movie_create_get = (req, res) => {
-  res.send('NOT IMPLEMENTED: Movie create GET');
+exports.movie_create_get = (req, res, next) => {
+  async.parallel(
+    {
+      categories(callback) {
+        Category.find(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      res.render('movie/form', {
+        title: 'Create Movie',
+        categories: results.categories,
+      });
+    }
+  );
 };
 
-exports.movie_create_post = (req, res) => {
-  res.send('NOT IMPLEMENTED: Movie crete POST');
-};
+exports.movie_create_post = [
+  (req, res, next) => {
+    if (!Array.isArray(req.body.category)) {
+      req.body.category =
+        typeof req.body.category === 'undefined' ? [] : [req.body.category];
+    }
+    next();
+  },
+  body('title', 'Title is required').trim().isLength({ min: 1 }).escape(),
+  body('release_date', 'Release date is required')
+    .optional({
+      checkFalsy: true,
+    })
+    .isISO8601()
+    .toDate(),
+  body('synopsis', 'Synopsis is required').trim().isLength({ min: 1 }).escape(),
+  body('categories.*').escape(),
+  body('rate', 'Rate is required')
+    .trim()
+    .isLength({ min: 1, max: 10 })
+    .escape(),
+  body('price', 'Price is required').trim().isLength({ min: 1 }).escape(),
+  body('num_stock', 'Number of stock is required')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+    const movie = new Movie({
+      title: req.body.title,
+      release_date: req.body.release_date,
+      synopsis: req.body.synopsis,
+      category: req.body.category,
+      rate: req.body.rate,
+      price: req.body.price,
+      num_stock: req.body.num_stock,
+    });
+    if (!errors.isEmpty()) {
+      async.parallel(
+        {
+          categories(callback) {
+            Category.find(callback);
+          },
+        },
+        (err, results) => {
+          if (err) {
+            return next(err);
+          }
+          for (const theCategory of results.categories) {
+            if (movie.category.includes(theCategory.id)) {
+              theCategory.checked = 'true';
+            }
+          }
+          res.render('movie/form', {
+            title: 'Create Movie',
+            categories: results.categories,
+            movie,
+            errors: errors.array(),
+          });
+        }
+      );
+      return;
+    }
+    movie.save((err) => {
+      if (err) {
+        return next(err);
+      }
+      res.redirect(movie.url);
+    });
+  },
+];
 
 exports.movie_delete_get = (req, res) => {
   res.send('NOT IMPLEMENTED: Movie delete GET');

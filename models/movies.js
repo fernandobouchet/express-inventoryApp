@@ -7,7 +7,7 @@ const MovieSchema = new Schema({
   release_date: { type: Date },
   synopsis: { type: String, required: true, maxLength: 500 },
   category: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
-  rate: { type: Number, required: true },
+  rate: { type: Number, required: true, max: 10, min: 0 },
   price: { type: Number, required: true },
   num_stock: { type: Number, required: true },
 });
