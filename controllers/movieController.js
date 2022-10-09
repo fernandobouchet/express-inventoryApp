@@ -151,12 +151,33 @@ exports.movie_create_post = [
   },
 ];
 
-exports.movie_delete_get = (req, res) => {
-  res.send('NOT IMPLEMENTED: Movie delete GET');
+exports.movie_delete_get = (req, res, next) => {
+  Movie.findById(req.params.id).exec((err, movie) => {
+    if (err) {
+      return next(err);
+    }
+    if (movie === null) {
+      res.redirect('/catalog/movies');
+    }
+    res.render('movie/delete', {
+      title: 'Delete movie',
+      movie,
+    });
+  });
 };
 
-exports.movie_delete_post = (req, res) => {
-  res.send('NOT IMPLEMENTED: Movie delete POST');
+exports.movie_delete_post = (req, res, next) => {
+  Movie.findById(req.params.id).exec((err, results) => {
+    if (err) {
+      return next(err);
+    }
+    Movie.findByIdAndRemove(req.body.movieId, (err) => {
+      if (err) {
+        return next(err);
+      }
+      res.redirect('/catalog/movies');
+    });
+  });
 };
 
 exports.movie_update_get = (req, res) => {

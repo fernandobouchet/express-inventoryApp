@@ -18,3 +18,6 @@ block content
         div(class="card-footer")
           each category in movie.category
             a(class="badge badge-pill badge-primary" href=category.url) #{category.name}
+  hr
+  p
+  a(href=movie.url+'/delete') Delete Movie

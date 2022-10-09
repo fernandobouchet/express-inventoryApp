@@ -1,0 +1,11 @@
+extends ../layout
+
+block content
+  h1 #{title}: #{movie.title}
+
+    p Do you really want to delete this movie?
+
+    form(method="POST" action="")
+      div.form-group
+        input#movie.form-control(type="hidden", name="movieId",required="true" value=movie.id)
+      button.btn.btn-danger(type="submit") Delete
