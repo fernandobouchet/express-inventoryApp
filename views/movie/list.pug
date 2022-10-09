@@ -3,13 +3,14 @@ extends ../layout
 block content
   h1= title
 
-  div(class="card-deck")
+  div(class="row row-cols-1 row-cols-md-2")
     each movie in movie_list
-      div(class="card")
-        a(class="card-body" href=movie.url)
-          h5(class="card-title") #{movie.title}
-        div(class="card-footer")
-          each category in movie.category
-            a(class="badge badge-pill badge-primary" href=category.url) #{category.name}
+      div(class="col mb-4")
+        div(class="card h-100")
+          a(class="card-body" href=movie.url)
+            h5(class="card-title") #{movie.title}
+          div(class="card-footer")
+            each category in movie.category
+              a(class="badge badge-pill badge-primary" href=category.url) #{category.name}
     else
       li There are no movies
