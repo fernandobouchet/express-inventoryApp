@@ -180,10 +180,101 @@ exports.movie_delete_post = (req, res, next) => {
   });
 };
 
-exports.movie_update_get = (req, res) => {
-  res.send('NOT IMPLEMENTED: Movie update GET');
+exports.movie_update_get = (req, res, next) => {
+  async.parallel(
+    {
+      movie(callback) {
+        Movie.findById(req.params.id).populate('category').exec(callback);
+      },
+      categories(callback) {
+        Category.find(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.movie === null) {
+        const err = new Error('Movie not found');
+        err.status = 404;
+        return next(err);
+      }
+      for (const theCategory of results.categories) {
+        for (const movieCategory of results.movie.category)
+          if (theCategory._id.toString() === movieCategory._id.toString()) {
+            theCategory.checked = 'true';
+          }
+      }
+      res.render('movie/form', {
+        title: 'Update Movie',
+        movie: results.movie,
+        categories: results.categories,
+      });
+    }
+  );
 };
 
-exports.movie_update_post = (req, res) => {
-  res.send('NOT IMPLEMENTED: Movie update POST');
-};
+exports.movie_update_post = [
+  body('title', 'Title is required').trim().isLength({ min: 1 }).escape(),
+  body('release_date', 'Release date is required')
+    .optional({
+      checkFalsy: true,
+    })
+    .isISO8601()
+    .toDate(),
+  body('synopsis', 'Synopsis is required').trim().isLength({ min: 1 }).escape(),
+  body('categories.*').escape(),
+  body('rate', 'Rate is required')
+    .trim()
+    .isLength({ min: 1, max: 10 })
+    .escape(),
+  body('price', 'Price is required').trim().isLength({ min: 1 }).escape(),
+  body('num_stock', 'Number of stock is required')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    const movie = new Movie({
+      title: req.body.title,
+      release_date: req.body.release_date,
+      synopsis: req.body.synopsis,
+      category: req.body.category,
+      rate: req.body.rate,
+      price: req.body.price,
+      num_stock: req.body.num_stock,
+      _id: req.params.id,
+    });
+    if (!errors.isEmpty()) {
+      async.parallel(
+        {
+          movie(callback) {
+            Movie.findById(req.params.id).populate('category').exec(callback);
+          },
+          categories(callback) {
+            Category.find(callback);
+          },
+        },
+        (err, results) => {
+          if (err) {
+            return next(err);
+          }
+          res.render('movie/form', {
+            title: 'Update Movie',
+            movie,
+            categories: results.categories,
+            errors: errors.array(),
+          });
+        }
+      );
+      return;
+    }
+    Movie.findByIdAndUpdate(req.params.id, movie, {}, (err, theMovie) => {
+      if (err) {
+        return next(err);
+      }
+      res.redirect(theMovie.url);
+    });
+  },
+];

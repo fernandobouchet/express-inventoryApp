@@ -22,4 +22,8 @@ MovieSchema.virtual('release_date_formated').get(function () {
   );
 });
 
+MovieSchema.virtual('release_date_formated_form').get(function () {
+  return DateTime.fromJSDate(this.release_date).toFormat('yyyy-MM-dd');
+});
+
 module.exports = mongoose.model('Movie', MovieSchema);

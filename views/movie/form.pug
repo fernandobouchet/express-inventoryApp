@@ -6,10 +6,10 @@ block content
   form(method='POST' action='')
     div.form-group
       label(for='title') Title:
-      input#title.form-control(type='text', placeholder='Movie title.' name='title' value=(undefined===movie ? '' : movie.name))
+      input#title.form-control(type='text', placeholder='Movie title.' name='title' value=(undefined===movie ? '' : movie.title))
     div.form-group
       label(for='release_date') Release Date:
-      input#release_date.form-control(type='date', placeholder='Movie release date.' name='release_date' value=(undefined===movie ? '' : movie.release_date))
+      input#release_date.form-control(type='date', placeholder='Movie release date.' name='release_date' value=(undefined===movie ? '' : movie.release_date_formated_form))
     div.form-group
       label(for='synopsis') Synopsis:
       input#synopsis.form-control(type='text', placeholder='Movie Synopsis.' name='synopsis' value=(undefined===movie ? '' : movie.synopsis))
